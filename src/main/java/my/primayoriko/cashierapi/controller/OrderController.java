@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import my.primayoriko.cashierapi.service.impl.OrderServiceImpl;
 import my.primayoriko.cashierapi.controller.model.response.DefaultResponse;
-import my.primayoriko.cashierapi.controller.model.request.NewOrderRequest;
+import my.primayoriko.cashierapi.controller.model.request.OrderRequest;
 import my.primayoriko.cashierapi.entity.*;
 
 @RestController
@@ -41,12 +41,13 @@ public class OrderController {
     }
 
     @PostMapping(value = "/orders")
-    public DefaultResponse addOrder(@RequestBody Order newOrder){
+    public DefaultResponse addOrder(@RequestBody OrderRequest newOrder){
         try {
-            orderService.insertOrder(newOrder);
+            orderService.insertOrder(newOrder.toOrder());
 
             return DefaultResponse.builder().statusCode(201).message("created").build();
         } catch (Exception e){
+            System.out.println(e.getMessage());
             return DefaultResponse.builder().statusCode(500).message("internal server error").build();
         }
     }

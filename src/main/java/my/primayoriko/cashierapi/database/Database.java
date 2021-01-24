@@ -74,19 +74,24 @@ public class Database {
     public void insertOrder(Order order) throws Exception {
         if(order != null){
             int newId = orders.size();
-            order.setId(newId);
-            orders.add(order);
+
             if(order.getCustomer() != null){
                 customers.add(order.getCustomer());
             }
 
+            int totalPrice = 0;
             Item[] orderItems = order.getItems();
             if(orderItems != null){
                 for(Item item: orderItems){
                     item.setOrderId(newId);
                     items.add(item);
+                    totalPrice += item.getQuantity() * item.getPrice();
                 }
             }
+
+            order.setId(newId);
+            order.setTotalPrice(totalPrice);
+            orders.add(order);
         }
     }
 }
