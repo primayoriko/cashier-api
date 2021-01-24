@@ -1,7 +1,5 @@
 package my.primayoriko.cashierapi.controller;
 
-import my.primayoriko.cashierapi.controller.model.request.NewOrderRequest;
-import my.primayoriko.cashierapi.entity.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
@@ -12,6 +10,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import my.primayoriko.cashierapi.service.impl.OrderServiceImpl;
+import my.primayoriko.cashierapi.controller.model.response.DefaultResponse;
+import my.primayoriko.cashierapi.controller.model.request.NewOrderRequest;
+import my.primayoriko.cashierapi.entity.*;
 
 @RestController
 public class OrderController {
@@ -40,11 +41,13 @@ public class OrderController {
     }
 
     @PostMapping(value = "/orders")
-    public void addOrder(@RequestBody NewOrderRequest newOrder){
+    public DefaultResponse addOrder(@RequestBody Order newOrder){
         try {
+            orderService.insertOrder(newOrder);
 
+            return DefaultResponse.builder().statusCode(201).message("created").build();
         } catch (Exception e){
-
+            return DefaultResponse.builder().statusCode(500).message("internal server error").build();
         }
     }
 }

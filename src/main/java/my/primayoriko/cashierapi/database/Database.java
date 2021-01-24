@@ -1,45 +1,62 @@
 package my.primayoriko.cashierapi.database;
 
+import java.util.ArrayList;
+
 import my.primayoriko.cashierapi.entity.*;
 
 public class Database {
-    private Customer[] customers;
-    private Order[] orders;
-    private Item[] items;
+    private ArrayList<Customer> customers;
+    private ArrayList<Order> orders;
+    private ArrayList<Item> items;
 
     private static Database instance = new Database();
 
     private Database(){
-        customers = new Customer[]{
-            Customer.builder().name("fal").email("f@g.com").build(),
-                Customer.builder().name("fal1").email("f1@g.com").build(),
-                Customer.builder().name("fal2").email("f2@g.com").build(),
-        };
+        customers = new ArrayList<Customer>();
+        orders = new ArrayList<Order>();
+        items = new ArrayList<Item>();
 
-        items = new Item[]{
+        customers.add(
+                Customer.builder().name("fal1").email("f1@g.com").build()
+                );
+        customers.add(
+                Customer.builder().name("fal3").email("f3@g.com").build()
+                );
+        customers.add(
+                Customer.builder().name("fal2").email("f2@g.com").build()
+                );
+
+        items.add(
                 Item.builder().
                         orderId(0).
                         name("bawang").price(1000).quantity(10).
-                        build(),
+                        build()
+                );
+
+        items.add(
                 Item.builder().
                         orderId(0).
                         name("kacang").price(1000).quantity(10).
-                        build(),
-        };
+                        build()
+                );
 
-        orders = new Order[]{
+        orders.add(
                 Order.builder().
-                        customer(customers[0]).
+                        id(0).
+                        customer(customers.get(0)).
                         items(new Item[]{
-                           items[0], items[1]
+                                items.get(0), items.get(1)
                         }).
                         totalPrice(20000).
-                        build(),
+                        build()
+                );
+        orders.add(
                 Order.builder().
-                        customer(customers[1]).
+                        id(1).
+                        customer(customers.get(1)).
                         totalPrice(0).
-                        build(),
-        };
+                        build()
+                );
     }
 
     public static Database getInstance() {
@@ -47,14 +64,29 @@ public class Database {
     }
 
     public Order[] getOrders(){
-        return orders;
+        return orders.toArray(new Order[0]);
     }
 
     public Order getOrder(int n) throws Exception{
-        return orders[n];
+        return orders.get(n);
     }
 
     public void insertOrder(Order order) throws Exception {
-//        Order[] newOrder = []
+        if(order != null){
+            int newId = orders.size();
+            order.setId(newId);
+            orders.add(order);
+            if(order.getCustomer() != null){
+                customers.add(order.getCustomer());
+            }
+
+            Item[] orderItems = order.getItems();
+            if(orderItems != null){
+                for(Item item: orderItems){
+                    item.setOrderId(newId);
+                    items.add(item);
+                }
+            }
+        }
     }
 }
